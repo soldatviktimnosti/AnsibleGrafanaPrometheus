@@ -33,6 +33,8 @@
           --advertise-address {{ k3s_master_ip }}
       args:
         creates: "/usr/local/bin/k3s"
+      async: 600
+      poll: 0
     
     - name: Verify K3s service
       command: systemctl is-active k3s
