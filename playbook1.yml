@@ -111,29 +111,7 @@
           sh -s - --node-name k3s-worker-{{ ansible_hostname }}
       args:
         creates: "/usr/local/bin/k3s"
-    - name: Diagnose K3s installation
-      shell: |
-        echo "=== K3s binary exists? ==="
-        ls -la /usr/local/bin/k3s || echo "K3s binary not found"
-        
-        echo "=== K3s service status ==="
-        systemctl status k3s --no-pager -l || echo "Service status check failed"
-        
-        echo "=== K3s service logs ==="
-        journalctl -u k3s --no-pager -n 50 || echo "Journal logs not available"
-        
-        echo "=== K3s process check ==="
-        ps aux | grep k3s || echo "No K3s processes found"
-        
-        echo "=== Systemd unit file ==="
-        cat /etc/systemd/system/k3s.service || echo "Service file not found"
-      register: k3s_diagnosis
-      failed_when: false
 
-    - name: Show K3s diagnosis
-      debug:
-        var: k3s_diagnosis.stdout
-        
     - name: Verify agent status
       command: systemctl is-active k3s-agent
       register: agent_status
