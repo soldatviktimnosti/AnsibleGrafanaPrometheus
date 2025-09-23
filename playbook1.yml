@@ -148,6 +148,7 @@
         curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
       args:
         creates: "/usr/local/bin/helm"
+
     - name: Install Prometheus without waiting
       shell: |
         helm repo add prometheus-community https://prometheus-community.github.io/helm-charts --force-update
@@ -171,6 +172,10 @@
           --timeout=600s
       async: 600
       poll: 30
+      register: prometheus_wait_result
+      until: prometheus_wait_result.rc == 0
+      retries: 3
+      delay: 10
 
     - name: Install Grafana without waiting
       shell: |
