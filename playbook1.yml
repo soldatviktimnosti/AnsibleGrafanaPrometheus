@@ -164,18 +164,40 @@
       environment:
         KUBECONFIG: "/etc/rancher/k3s/k3s.yaml"
 
-    - name: Wait for Prometheus to be ready
+    - name: Debug - Check what pods were created for Prometheus
       shell: |
+        echo "=== All pods in monitoring namespace ==="
+        kubectl get pods -n monitoring -o wide
+        echo "=== Pods with labels ==="
+        kubectl get pods -n monitoring --show-labels
+        echo "=== Services ==="
+        kubectl get svc -n monitoring
+      register: prometheus_debug
+      failed_when: false
+
+    - name: Show Prometheus debug info
+      debug:
+        var: prometheus_debug.stdout
+
+    - name: Wait for Prometheus with correct labels
+      shell: |
+        # Пробуем разные возможные лейблы для Prometheus
         kubectl wait --for=condition=ready pod \
-          -l app=prometheus \
+          -l "app.kubernetes.io/name=prometheus" \
           -n monitoring \
-          --timeout=600s
-      async: 600
-      poll: 30
-      register: prometheus_wait_result
-      until: prometheus_wait_result.rc == 0
-      retries: 3
-      delay: 10
+          --timeout=300s || \
+        kubectl wait --for=condition=ready pod \
+          -l "app=prometheus-server" \
+          -n monitoring \
+          --timeout=300s || \
+        kubectl wait --for=condition=ready pod \
+          -l "component=server" \
+          -n monitoring \
+          --timeout=300s || \
+        echo "Trying universal wait..." && \
+        kubectl wait --for=condition=ready pod --all -n monitoring --timeout=300s
+      async: 300
+      poll: 15
 
     - name: Install Grafana without waiting
       shell: |
