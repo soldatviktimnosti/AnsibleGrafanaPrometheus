@@ -134,12 +134,12 @@
       debug:
         var: k3s_diagnosis.stdout
         
-        - name: Verify agent status
-          command: systemctl is-active k3s-agent
-          register: agent_status
-          until: agent_status.rc == 0
-          retries: 20
-          delay: 10
+    - name: Verify agent status
+      command: systemctl is-active k3s-agent
+      register: agent_status
+      until: agent_status.rc == 0
+      retries: 20
+      delay: 10
 
 - name: Verify cluster
   hosts: control-plane
