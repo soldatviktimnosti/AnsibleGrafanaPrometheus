@@ -40,8 +40,8 @@
       command: systemctl is-active k3s
       register: k3s_status
       until: k3s_status.rc == 0
-      retries: 10
-      delay: 5
+      retries: 20
+      delay: 10
 
     - name: Copy kubeconfig
       become: yes
