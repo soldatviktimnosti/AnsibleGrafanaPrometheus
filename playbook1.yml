@@ -111,13 +111,35 @@
           sh -s - --node-name k3s-worker-{{ ansible_hostname }}
       args:
         creates: "/usr/local/bin/k3s"
-    
-    - name: Verify agent status
-      command: systemctl is-active k3s-agent
-      register: agent_status
-      until: agent_status.rc == 0
-      retries: 10
-      delay: 5
+    - name: Diagnose K3s installation
+      shell: |
+        echo "=== K3s binary exists? ==="
+        ls -la /usr/local/bin/k3s || echo "K3s binary not found"
+        
+        echo "=== K3s service status ==="
+        systemctl status k3s --no-pager -l || echo "Service status check failed"
+        
+        echo "=== K3s service logs ==="
+        journalctl -u k3s --no-pager -n 50 || echo "Journal logs not available"
+        
+        echo "=== K3s process check ==="
+        ps aux | grep k3s || echo "No K3s processes found"
+        
+        echo "=== Systemd unit file ==="
+        cat /etc/systemd/system/k3s.service || echo "Service file not found"
+      register: k3s_diagnosis
+      failed_when: false
+
+    - name: Show K3s diagnosis
+      debug:
+        var: k3s_diagnosis.stdout
+        
+        - name: Verify agent status
+          command: systemctl is-active k3s-agent
+          register: agent_status
+          until: agent_status.rc == 0
+          retries: 20
+          delay: 10
 
 - name: Verify cluster
   hosts: control-plane
@@ -132,7 +154,7 @@
       command: kubectl get nodes
       register: nodes
       until: "'k3s-master' in nodes.stdout and 'k3s-worker' in nodes.stdout"
-      retries: 10
+      retries: 20
       delay: 15
 
 - name: Install Grafana, Prometheus on master
