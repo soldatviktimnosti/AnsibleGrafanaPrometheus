@@ -19,7 +19,7 @@
   vars:
     k3s_master_ip: "192.168.56.101"
     kubeconfig_path: "/etc/rancher/k3s/k3s.yaml"
-    k3s_version: "v1.33.1+k3s1" 
+    k3s_version: "v1.27.4+k3s1" 
   
   tasks:
     - name: Install K3s server with fixed IP
@@ -92,7 +92,7 @@
   vars:
     k3s_master_ip: "192.168.56.101"
     kubeconfig_path: "/etc/rancher/k3s/k3s.yaml"
-    k3s_version: "v1.33.1+k3s1"
+    k3s_version: "v1.27.4+k3s1"
 
   tasks:
     - name: Get master node token
@@ -123,7 +123,7 @@
   vars:
     k3s_master_ip: "192.168.56.101"
     kubeconfig_path: "/etc/rancher/k3s/k3s.yaml"
-    k3s_version: "v1.33.1+k3s1"
+    k3s_version: "v1.27.4+k3s1"
 
   tasks:
     - name: Check nodes status
@@ -139,7 +139,7 @@
   vars:
     k3s_master_ip: "192.168.56.101"
     kubeconfig_path: "/etc/rancher/k3s/k3s.yaml"
-    k3s_version: "v1.33.1+k3s1"
+    k3s_version: "v1.27.4+k3s1"
 
   tasks:
     - name: Install Helm
