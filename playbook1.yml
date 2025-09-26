@@ -41,7 +41,7 @@
       register: k3s_status
       until: k3s_status.rc == 0
       retries: 20
-      delay: 10
+      delay: 20
 
     - name: Copy kubeconfig
       become: yes
