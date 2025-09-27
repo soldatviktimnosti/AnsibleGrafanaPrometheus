@@ -33,8 +33,13 @@
           --advertise-address {{ k3s_master_ip }}
       args:
         creates: "/usr/local/bin/k3s"
-      async: 1200
-      poll: 0
+      # УБРАТЬ async и poll - сделать синхронную установку
+      register: k3s_install_result
+      failed_when: k3s_install_result.rc != 0
+
+    - name: Debug installation result
+      debug:
+        var: k3s_install_result
     
     - name: Verify K3s installation with diagnostics
       block:
