@@ -56,6 +56,9 @@
         - name: Check K3s service logs on failure
           command: journalctl -u k3s -n 50 --no-pager
           register: k3s_logs
+        - name: Show K3s service logs
+          debug:
+            var: k3s_logs.stdout
 
     - name: Copy kubeconfig
       become: yes
