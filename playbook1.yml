@@ -19,23 +19,30 @@
   vars:
     k3s_master_ip: "192.168.56.101"
     kubeconfig_path: "/etc/rancher/k3s/k3s.yaml"
-    k3s_version: "v1.27.4+k3s1" 
+    k3s_version: "v1.33.1+k3s1" 
   
   tasks:
-    - name: Install K3s server with fixed IP
+    - name: Download K3s binary manually
+      get_url:
+        url: https://github.com/k3s-io/k3s/releases/download/v1.33.3+k3s1/k3s
+        dest: /usr/local/bin/k3s
+        mode: '0755'
+        timeout: 120
+
+    - name: Download K3s installer
+      get_url:
+        url: https://get.k3s.io
+        dest: /tmp/install-k3s.sh
+        mode: '0755'
+
+    - name: Install K3s with custom options
       shell: |
-        curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION={{ k3s_version }} sh -s - \
-          --write-kubeconfig-mode 644 \
-          --disable traefik \
-          --node-name k3s-master \
-          --tls-san {{ k3s_master_ip }} \
-          --bind-address {{ k3s_master_ip }} \
-          --advertise-address {{ k3s_master_ip }}
+        INSTALL_K3S_SKIP_DOWNLOAD=true \
+        INSTALL_K3S_EXEC="--write-kubeconfig-mode 644 --disable traefik --node-name k3s-master --tls-san {{ k3s_master_ip }} --bind-address {{ k3s_master_ip }} --advertise-address {{ k3s_master_ip }}" \
+        /tmp/install-k3s.sh
       args:
-        creates: "/usr/local/bin/k3s"
-      # УБРАТЬ async и poll - сделать синхронную установку
-      register: k3s_install_result
-      failed_when: k3s_install_result.rc != 0
+        creates: "/etc/rancher/k3s/k3s.yaml"  # Проверять по конфигу, а не бинарнику
+      register: k3s_install
 
     - name: Debug installation result
       debug:
@@ -111,7 +118,7 @@
   vars:
     k3s_master_ip: "192.168.56.101"
     kubeconfig_path: "/etc/rancher/k3s/k3s.yaml"
-    k3s_version: "v1.27.4+k3s1"
+    k3s_version: "v1.33.1+k3s1"
 
   tasks:
     - name: Get master node token
@@ -142,7 +149,7 @@
   vars:
     k3s_master_ip: "192.168.56.101"
     kubeconfig_path: "/etc/rancher/k3s/k3s.yaml"
-    k3s_version: "v1.27.4+k3s1"
+    k3s_version: "v1.33.1+k3s1"
 
   tasks:
     - name: Check nodes status
@@ -158,7 +165,7 @@
   vars:
     k3s_master_ip: "192.168.56.101"
     kubeconfig_path: "/etc/rancher/k3s/k3s.yaml"
-    k3s_version: "v1.27.4+k3s1"
+    k3s_version: "v1.33.1+k3s1"
 
   tasks:
     - name: Install Helm
