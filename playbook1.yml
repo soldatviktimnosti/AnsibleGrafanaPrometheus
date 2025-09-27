@@ -33,7 +33,7 @@
           --advertise-address {{ k3s_master_ip }}
       args:
         creates: "/usr/local/bin/k3s"
-      async: 600
+      async: 1200
       poll: 0
     
     - name: Verify K3s service
