@@ -36,12 +36,21 @@
       async: 1200
       poll: 0
     
-    - name: Verify K3s service
-      command: systemctl is-active k3s
-      register: k3s_status
-      until: k3s_status.rc == 0
-      retries: 20
-      delay: 20
+    - name: Verify K3s installation with diagnostics
+      block:
+
+       - name: Verify K3s service
+         command: systemctl is-active k3s
+         register: k3s_status
+         until: k3s_status.rc == 0
+         retries: 20
+         delay: 20
+      
+      rescue:
+        # Этот блок выполнится ТОЛЬКО если Verify K3s service упадет
+        - name: Check K3s service logs on failure
+          command: journalctl -u k3s -n 50 --no-pager
+          register: k3s_logs
 
     - name: Copy kubeconfig
       become: yes
