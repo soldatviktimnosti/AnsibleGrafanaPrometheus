@@ -23,18 +23,24 @@
   
   tasks:
 
+    - name: Install ntpdate (для Debian)
+      apt:
+        name: ntpdate
+        state: present
+      become: yes
+
     - name: Update system time
       command: ntpdate -s pool.ntp.org
       become: yes
 
     - name: Update CA certificates
-      package:
+      apt:
         name: ca-certificates
         state: latest
       become: yes
 
-    - name: Update CA trust
-      command: update-ca-trust
+    - name: Update CA trust (для Debian)
+      command: update-ca-certificates
       become: yes
 
     - name: Download K3s with retry
