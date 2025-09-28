@@ -211,18 +211,18 @@
         kubectl wait --for=condition=ready pod \
           -l "app.kubernetes.io/name=prometheus" \
           -n monitoring \
-          --timeout=300s || \
+          --timeout=1200s || \
         kubectl wait --for=condition=ready pod \
           -l "app=prometheus-server" \
           -n monitoring \
-          --timeout=300s || \
+          --timeout=1200s || \
         kubectl wait --for=condition=ready pod \
           -l "component=server" \
           -n monitoring \
-          --timeout=300s || \
+          --timeout=1200s || \
         echo "Trying universal wait..." && \
         kubectl wait --for=condition=ready pod --all -n monitoring --timeout=300s
-      async: 300
+      async: 1200
       poll: 15
 
     - name: Install Grafana without waiting
@@ -244,6 +244,6 @@
         kubectl wait --for=condition=ready pod \
           -l app.kubernetes.io/name=grafana \
           -n monitoring \
-          --timeout=600s
-      async: 600
+          --timeout=1200s
+      async: 1200
       poll: 30
