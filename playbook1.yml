@@ -75,6 +75,9 @@
       args:
         creates: "/etc/rancher/k3s/k3s.yaml"  # Проверять по конфигу, а не бинарнику
       register: k3s_install
+      until: k3s_install is succeeded
+      retries: 5
+      delay: 15
 
     - name: Debug installation result
       debug:
