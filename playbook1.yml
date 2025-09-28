@@ -66,14 +66,6 @@
         url: https://get.k3s.io
         dest: /tmp/install-k3s.sh
         mode: '0755'
-        
-    - name: Wait for K3s master to be ready
-      wait_for:
-        host: "{{ k3s_master_ip }}"
-        port: 6443
-        state: started
-        timeout: 60
-        delay: 10
 
     - name: Install K3s with custom options
       shell: |
