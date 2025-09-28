@@ -192,6 +192,9 @@
       args:
         creates: "/etc/rancher/k3s/k3s-agent.yaml"
       register: k3s_agent_install
+      until: k3s_agent_install is succeeded
+      retries: 5
+      delay: 15
 
     - name: Verify agent status
       command: systemctl is-active k3s-agent
@@ -231,6 +234,10 @@
         curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
       args:
         creates: "/usr/local/bin/helm"
+      register: helm_install
+      until: helm_install is succeeded
+      retries: 5
+      delay: 15
 
     - name: Install Prometheus without waiting
       shell: |
@@ -246,6 +253,10 @@
           --wait=false
       environment:
         KUBECONFIG: "/etc/rancher/k3s/k3s.yaml"
+      register: prometheus_install
+      until: prometheus_install is succeeded
+      retries: 5
+      delay: 15
 
     - name: Debug - Check what pods were created for Prometheus
       shell: |
@@ -295,6 +306,10 @@
           --wait=false
       environment:
         KUBECONFIG: "/etc/rancher/k3s/k3s.yaml"
+      register: grafana_install
+      until: grafana_install is succeeded
+      retries: 5
+      delay: 15
 
     - name: Wait for Grafana to be ready
       shell: |
