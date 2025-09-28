@@ -48,7 +48,7 @@
         url: https://github.com/k3s-io/k3s/releases/download/v1.33.3+k3s1/k3s
         dest: /usr/local/bin/k3s
         mode: '0755'
-        validate_certs: no
+        validate_certs: yes
       register: download_result
       until: download_result is succeeded
       retries: 3
