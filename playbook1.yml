@@ -113,6 +113,8 @@
 
 - name: Deep API health check
   hosts: control-plane
+  vars: 
+  k3s_master_ip: "10.0.2.15"
   tasks:
     - name: Check Kubernetes components status
       command: sudo k3s kubectl get cs
