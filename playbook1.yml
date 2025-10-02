@@ -17,7 +17,7 @@
   hosts: control-plane
   become: yes
   vars:
-    k3s_master_ip: "10.0.2.15
+    k3s_master_ip: "10.0.2.15"
     kubeconfig_path: "/etc/rancher/k3s/k3s.yaml"
     k3s_version: "v1.33.3+k3s1" 
   
