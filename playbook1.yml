@@ -124,7 +124,7 @@
 
     - name: Direct port check
       wait_for:
-        host: "10.0.2.15"
+        host: "{{ k3s_master_ip }}"
         port: 6443
         timeout: 60
       delegate_to: "{{ groups['workers'][0] }}"
