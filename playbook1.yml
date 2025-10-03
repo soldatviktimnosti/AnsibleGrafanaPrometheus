@@ -158,6 +158,27 @@
     k3s_version: "v1.33.3+k3s1"
 
   tasks:
+
+    - name: Install ntpdate (для Debian)
+      apt:
+        name: ntpdate
+        state: present
+      become: yes
+
+    - name: Update system time
+      command: ntpdate -s pool.ntp.org
+      become: yes
+
+    - name: Update CA certificates
+      apt:
+        name: ca-certificates
+        state: latest
+      become: yes
+
+    - name: Update CA trust (для Debian)
+      command: update-ca-certificates
+      become: yes
+      
     - name: Get master node token
       shell: cat /var/lib/rancher/k3s/server/node-token
       register: k3s_token
