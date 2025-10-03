@@ -114,7 +114,7 @@
 - name: Deep API health check
   hosts: control-plane
   vars: 
-    k3s_master_ip: "10.0.2.15"
+    k3s_master_ip: "192.168.56.101"
   tasks:
     - name: Check Kubernetes components status
       command: sudo k3s kubectl get cs
@@ -153,7 +153,7 @@
   hosts: workers
   become: yes
   vars:
-    k3s_master_ip: "10.0.2.15"
+    k3s_master_ip: "192.168.56.101"
     kubeconfig_path: "/etc/rancher/k3s/k3s.yaml"
     k3s_version: "v1.33.3+k3s1"
 
